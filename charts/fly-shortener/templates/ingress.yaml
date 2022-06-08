@@ -1,0 +1,40 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: gavinnewsom-shorties-ingress
+  namespace: spoke-rewired
+  annotations:
+    ingress.kubernetes.io/proxy-body-size: 50m
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/proxy-body-size: 50m
+    nignx.ingress.kubernetes.io/force-ssl-redirect: "true"
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: gavinnewsom.me
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: gavinnewsom-shortie
+                port:
+                  number: 80
+    - host: gavinnewsom.us
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: gavinnewsom-shortie
+                port:
+                  number: 80
+  tls:
+    - hosts:
+        - gavinnewsom.me
+        - gavinnewsom.us
+      secretName: tls-gavinnewsom-shorties
