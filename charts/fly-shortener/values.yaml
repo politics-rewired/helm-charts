@@ -1,0 +1,14 @@
+ingress:
+  annotations: {}
+  labels: {}
+  domains:
+    - shortie.me
+
+pod:
+  annotations: {}
+  labels: {}
+
+image:
+  repository: us-east4-docker.pkg.dev/assemble-services/apps/link-shortener
+  tag: "1.3.2"
+  pullPolicy: IfNotPresent

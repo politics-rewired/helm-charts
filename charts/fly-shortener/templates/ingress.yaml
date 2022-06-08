@@ -2,39 +2,35 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: gavinnewsom-shorties-ingress
-  namespace: spoke-rewired
+metadata:
+  name: {{ include "flyshortener.fullname" . }}
+  labels:
+    {{- include "flyshortener.labels" . | nindent 4 }}
+  {{- with .Values.ingress.labels }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+{{- if .Values.ingress.annotations }}
   annotations:
-    ingress.kubernetes.io/proxy-body-size: 50m
-    cert-manager.io/cluster-issuer: letsencrypt-prod
-    nginx.ingress.kubernetes.io/rewrite-target: /
-    nginx.ingress.kubernetes.io/proxy-body-size: 50m
-    nignx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    {{ toYaml .Values.ingress.annotations | nindent 4 }}
+{{- end }}
 spec:
   ingressClassName: nginx
   rules:
-    - host: gavinnewsom.me
+    {{- range $domain := .Values.ingress.domains }}
+    - host: {{ $domain }}
       http:
         paths:
           - path: /
             pathType: Prefix
             backend:
               service:
-                name: gavinnewsom-shortie
+                name: {{ include "flyshortener.fullname" . }}-shortener
                 port:
                   number: 80
-    - host: gavinnewsom.us
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: gavinnewsom-shortie
-                port:
-                  number: 80
+    {{- end }}
   tls:
     - hosts:
-        - gavinnewsom.me
-        - gavinnewsom.us
-      secretName: tls-gavinnewsom-shorties
+        {{- range $domain := .Values.ingress.domains }}
+          - {{ $domain }}
+        {{- end }}
+      secretName: tls-{{ include "flyshortener.fullname" . }}
