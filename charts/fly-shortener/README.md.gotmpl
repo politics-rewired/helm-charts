@@ -1,0 +1,31 @@
+{ template "chart.header" . }}
+{{ template "chart.deprecationWarning" . }}
+
+{{ template "chart.versionBadge" . }}{{ template "chart.typeBadge" . }}{{ template "chart.appVersionBadge" . }}
+
+{{ template "chart.description" . }}
+
+{{ template "chart.homepageLine" . }}
+
+## Installation
+
+### Add Helm repository
+
+```shell
+helm repo add rewired https://helm.rewired.dev/
+helm repo update
+```
+
+## Install Fly Shortener chart
+
+Using config from a file:
+
+```bash
+helm install --generate-name rewired/fly-shortener
+```
+
+## Configuration
+
+The following table lists the configurable parameters of the chart and the default values.
+
+{{ template "chart.valuesSection" . }}

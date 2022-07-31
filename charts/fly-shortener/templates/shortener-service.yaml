@@ -1,0 +1,13 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gavinnewsom-shortie
+  namespace: spoke-rewired
+spec:
+  selector:
+    app: gavinnewsom-shortie
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080

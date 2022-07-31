@@ -1,0 +1,36 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+metadata:
+  name: {{ include "flyshortener.fullname" . }}
+  labels:
+    {{- include "flyshortener.labels" . | nindent 4 }}
+  {{- with .Values.ingress.labels }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+{{- if .Values.ingress.annotations }}
+  annotations:
+    {{ toYaml .Values.ingress.annotations | nindent 4 }}
+{{- end }}
+spec:
+  ingressClassName: nginx
+  rules:
+    {{- range $domain := .Values.ingress.domains }}
+    - host: {{ $domain }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "flyshortener.fullname" . }}-shortener
+                port:
+                  number: 80
+    {{- end }}
+  tls:
+    - hosts:
+        {{- range $domain := .Values.ingress.domains }}
+          - {{ $domain }}
+        {{- end }}
+      secretName: tls-{{ include "flyshortener.fullname" . }}
